@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Conversor de Moeda 1.0</title>
+</head>
+
+<body>
+    <div id="container">
+        <div id="box">
+            <h1>Conversor de Moedas</h1>
+            <input type="text" id="quantia" placeholder="Quantia" required>
+            <select title="moeda_base" id="moeda_base" required>
+                <option value="" disabled selected>Selecione a Moeda Base</option>
+                <option value="BRL">Real Brasileiro (BRL)</option>
+                <option value="USD">Dólar Americano (USD)</option>
+                <option value="EUR">Euro (EUR)</option>
+                <option value="GBP">Libra Esterlina (GBP)</option>
+            </select>
+            <select title="moeda_final" id="moeda_final">
+                <option value="" disabled selected>Selecione a Moeda Final</option>
+                <option value="BRL">Real Brasileiro (BRL)</option>
+                <option value="USD">Dólar Americano (USD)</option>
+                <option value="EUR">Euro (EUR)</option>
+                <option value="GBP">Libra Esterlina (GBP)</option>
+            </select>
+            <button onclick="converteMoeda()">Converter</button>
+            <p id="Resultado"></p>
+        </div>
+    </div>
+    <script>
+        const converteMoeda = () => {
+            const quantia = document.getElementById('quantia').value;
+            const moedaBase = document.getElementById('moeda_base').value;
+            const moedaFinal = document.getElementById('moeda_final').value;
+            const simboloMoedaBase = obterSimboloMoeda(moedaBase);
+            const simboloMoedaFinal = obterSimboloMoeda(moedaFinal);
+
+            fetch(`https://api.exchangerate-api.com/v4/latest/${moedaBase}`)
+                .then(response => response.json())
+                .then(data => {
+                    const taxaCambio = data.rates[moedaFinal];
+                    const resultado = (parseFloat(quantia) * taxaCambio).toFixed(2);
+                    document.getElementById('Resultado').innerText = `Resultado: ${simboloMoedaFinal} ${resultado}`;
+                })
+                .catch(error => {
+                    document.getElementById('Resultado').innerText = 'Erro ao processar a solicitação';
+                });
+        }
+
+        const obterSimboloMoeda = (moeda) => {
+            switch (moeda) {
+                case 'BRL':
+                    return 'R$';
+                case 'USD':
+                    return '$';
+                case 'EUR':
+                    return '€';
+                case 'GBP':
+                    return '£';
+                default:
+                    return '';
+            }
+        }
+
+    </script>
+</body>
+
+</html>
